@@ -435,6 +435,8 @@ class Article < Content
       moo_comment.save
     end
     
+    self.body = self.body + article_to_merge.body
+    
     # relaod the merged article before destroying so it reloads the association of comments.  Otherwise, deleting the article will remove
     # the comment even though it's already been moved.
     article_to_merge = Article.find(article_to_merge)
