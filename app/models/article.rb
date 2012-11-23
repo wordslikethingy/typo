@@ -419,11 +419,11 @@ class Article < Content
   # Merge a second article into this one
   def merge(article_to_merge)
     #article_to_merge = Article.find(article_to_merge)
-    # Use where instead of find so we don't toss exception.  We skip the exception so we can combine testing an empty object against with loading the same object we're
+    # Use find_by_id instead of find so we don't toss exception.  We skip the exception so we can combine testing an empty object against with loading the same object we're
     # currently in.
-    article_to_merge = Article.where(:id => article_to_merge)
+    article_to_merge = Article.find_by_id(article_to_merge)
     # can't merge and empty article or an article to itself.
-    if article_to_merge == [] || article_to_merge.id == self.id
+    if article_to_merge == nil || article_to_merge.id == self.id
       errors.add(:base, _("Invalid Merge"))
       return
     end
