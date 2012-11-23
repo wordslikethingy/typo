@@ -113,6 +113,30 @@ class Admin::ContentController < Admin::BaseController
     render :text => nil
   end
 
+  def merge
+    # Only admins can merge articles
+    unless current_user.admin?
+      redirect_to :action => 'index'
+      flash[:error] = _("Error, you are not allowed to perform this action")
+      return
+    end
+    @article = Article.find_by_id(params[:id])
+    unless @article.id
+      redirect_to :action => 'index'
+      flash[:error] = _("Error, Invalid article.")
+      return
+    end
+    @article.merge(params[:merge_with])
+    # did the merge set an error?
+    if @article.errors[:base][0] != nil
+      flash[:error] = @article.errors[:base][0]
+      redirect_to :action => 'index'
+      return
+    end
+    flash[:notice] = _('Article was successfully merged')
+    redirect_to :action => 'index'
+  end
+
   protected
 
   def get_fresh_or_existing_draft_for_article
@@ -240,4 +264,5 @@ class Admin::ContentController < Admin::BaseController
   def setup_resources
     @resources = Resource.by_created_at
   end
+
 end

@@ -416,6 +416,31 @@ class Article < Content
     user.admin? || user_id == user.id
   end
 
+  # Merge a second article into this one
+  def merge(article_to_merge)
+    #article_to_merge = Article.find(article_to_merge)
+    # Use where instead of find so we don't toss exception.  We skip the exception so we can combine testing an empty object against with loading the same object we're
+    # currently in.
+    article_to_merge = Article.where(:id => article_to_merge)
+    # can't merge and empty article or an article to itself.
+    if article_to_merge == [] || article_to_merge.id == self.id
+      errors.add(:base, _("Invalid Merge"))
+      return
+    end
+    
+    # add all article_to_merge's comments to the current model object.  Then concatenate it's body to the current article and save.
+    article_to_merge.comments.each do |da_comment|
+      moo_comment = Comment.find(da_comment.id)
+      moo_comment.article_id = self.id
+      moo_comment.save
+    end
+    
+    # relaod the merged article before destroying so it reloads the association of comments.  Otherwise, deleting the article will remove
+    # the comment even though it's already been moved.
+    article_to_merge = Article.find(article_to_merge)
+    article_to_merge.destroy
+  end
+
   protected
 
   def set_published_at
@@ -466,4 +491,5 @@ class Article < Content
     to = to - 1 # pull off 1 second so we don't overlap onto the next day
     return from..to
   end
+  
 end

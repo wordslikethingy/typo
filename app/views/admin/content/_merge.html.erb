@@ -1,0 +1,8 @@
+<!-- <form accept-charset="UTF-8" action="/admin/content/new/5" class="autosave" enctype="multipart/form-data" id="article_form" method="post"> -->
+<%= form_tag(form_action, :id => "#{form_type}_merge") do %>
+<div class='class'>
+    <h4><%= _("Merge Articles") %></h4>
+    Article ID <input type="text" name="merge_with" value="" id="merge_with" />
+    <%= save( _("Merge")) %>
+</div>
+<% end %>

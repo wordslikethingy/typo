@@ -276,3 +276,8 @@ end
 Then /^show me the page$/ do
   save_and_open_page
 end
+
+When /^(?:|I )enter the id for  "(.+)"$/ do |article_name|
+  id = Content.find_by_title!(article_name).id
+  fill_in('merge_with', :with => id)
+end
